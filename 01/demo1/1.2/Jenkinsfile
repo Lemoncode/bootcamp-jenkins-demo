@@ -50,7 +50,7 @@ pipeline {
                 expression { return params.RC }
             }
             steps {
-                archiveArtifacts('./01/src/app/')
+                archiveArtifacts('01/src/app/')
             }
         }
         /*diff*/
