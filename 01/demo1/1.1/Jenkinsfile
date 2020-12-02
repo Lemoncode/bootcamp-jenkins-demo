@@ -19,10 +19,11 @@ pipeline {
             steps { 
                 dir('./01/src') {
                     echo "Building version ${VERSION} with suffix: ${VERSION_RC}"
-                    sh '''
-                        npm install
-                        npm run build
-                    '''
+                    echo $(pwd)
+                    // sh '''
+                    //     npm install
+                    //     npm run build
+                    // '''
                 }
             }
         }
