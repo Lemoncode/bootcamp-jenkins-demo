@@ -1,7 +1,3 @@
-# bootcamp-jenkins-demo
-An independent repository to expose Jenkins demos
-
-```groovy
 pipeline {
     agent any
     /*diff*/
@@ -10,7 +6,7 @@ pipeline {
     }
     /*diff*/
     environment {
-        VERSION = ""
+        VERSION = sh([ script: 'cd ./01/src && npm run env | grep "npm_package_version"', returnStdout: true ]).trim()
         VERSION_RC = "rc.2"
     }
     stages {
@@ -31,13 +27,14 @@ pipeline {
             }
             /*diff*/
             steps { 
-                env.VERSION = sh([ script: 'npm run env | grep "npm_package_version"', returnStdout: true ]).trim()
-                // echo "Building version ${VERSION} with suffix: ${VERSION_RC}"
-                echo "Building version ${VERSION} with suffix: ${VERSION_SUFFIX}"
-                sh '''
-                    npm install
-                    npm run build
-                '''
+                dir('./01/src') {
+                    // echo "Building version ${VERSION} with suffix: ${VERSION_RC}"
+                    echo "Building version ${VERSION} with suffix: ${VERSION_SUFFIX}"
+                    sh '''
+                        npm install
+                        npm run build
+                    '''
+                }
             }
         }
         stage('Unit Test') {
@@ -47,15 +44,15 @@ pipeline {
                 }
             }
         }
+        /*diff*/
         stage('Publish') {
             when {
                 expression { return params.RC }
                 steps {
-                    archiveArtifacts('app/')
+                    archiveArtifacts('./01/src/app/')
                 }
             }
         }
+        /*diff*/
     }
 }
-```
-
