@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+    environment {
+        VERSION = ""
+        VERSION_RC = "rc.2"
+    }
+    stages {
+        stage('Audit tools') {
+            steps {
+                sh '''
+                    git version
+                    docker version
+                    node --version
+                    npm version
+                '''
+            }
+        }
+        stage('Build') {
+            steps { 
+                env.VERSION = sh([ script: 'npm run env | grep "npm_package_version"', returnStdout: true ]).trim()
+                echo "Building version ${VERSION} with suffix: ${VERSION_RC}"
+                sh '''
+                    npm install
+                    npm run build
+                '''
+            }
+        }
+        stage('Unit Test') {
+            steps {
+                dir('./01/src') {
+                    sh 'npm test'
+                }
+            }
+        }
+    }
+}
