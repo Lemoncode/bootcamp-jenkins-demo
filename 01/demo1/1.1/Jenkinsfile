@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        VERSION = sh([ script: 'cd ../src && npm run env | grep "npm_package_version"', returnStdout: true ]).trim()
+        VERSION = sh([ script: 'cd ./01/src && npm run env | grep "npm_package_version"', returnStdout: true ]).trim()
         VERSION_RC = "rc.2"
     }
     stages {
