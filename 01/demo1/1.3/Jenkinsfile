@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+    parameters {
+        booleanParam(name: 'RC', defaultValue: false, description: 'Is this a Release Candidate?')
+    }
+    environment {
+        VERSION = sh([ script: 'cd ./01/src && npm run env | grep "npm_package_version"', returnStdout: true ]).trim()
+        VERSION_RC = "rc.2"
+    }
+    stages {
+        stage('Audit tools') {
+            steps {
+                // sh '''
+                //     git version
+                //     docker version
+                //     node --version
+                //     npm version
+                // '''
+                auditTools()
+            }
+        }
+        stage('Build') {
+            environment {
+                // VERSION_SUFFIX = "${sh(script:'if [ "${RC}" == "false" ] ; then echo -n "${VERSION_RC}+ci.${BUILD_NUMBER}"; else echo -n "${VERSION_RC}"; fi', returnStdout: true)}"
+                VERSION_SUFFIX = getVersionSuffix()
+            }
+            steps { 
+                dir('./01/src') {
+                    echo "Building version ${VERSION} with suffix: ${VERSION_SUFFIX}"
+                    sh '''
+                        npm install
+                        npm run build
+                    '''
+                }
+            }
+        }
+        stage('Unit Test') {
+            steps {
+                dir('./01/src') {
+                    sh 'npm test'
+                }
+            }
+        }
+        stage('Publish') {
+            when {
+                expression { return params.RC }
+            }
+            steps {
+                archiveArtifacts('01/src/app/')
+            }
+        }
+    }
+}
+
+String getVersionSuffix() {
+    if (params.RC) {
+        return env.VERSION_RC
+    } else {
+        return env.VERSION_RC + '+ci' + env.BUILD_NUMBER
+    }
+}
+
+void auditTools() {
+    sh '''
+        git version
+        docker version
+        node --version
+        npm version
+    '''   
+}
