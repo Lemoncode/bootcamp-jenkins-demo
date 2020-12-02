@@ -17,11 +17,13 @@ pipeline {
         }
         stage('Build') {
             steps { 
-                echo "Building version ${VERSION} with suffix: ${VERSION_RC}"
-                sh '''
-                    npm install
-                    npm run build
-                '''
+                dir('./01/src') {
+                    echo "Building version ${VERSION} with suffix: ${VERSION_RC}"
+                    sh '''
+                        npm install
+                        npm run build
+                    '''
+                }
             }
         }
         stage('Unit Test') {
