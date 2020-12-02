@@ -48,9 +48,9 @@ pipeline {
         stage('Publish') {
             when {
                 expression { return params.RC }
-                steps {
-                    archiveArtifacts('./01/src/app/')
-                }
+            }
+            steps {
+                archiveArtifacts('./01/src/app/')
             }
         }
         /*diff*/
