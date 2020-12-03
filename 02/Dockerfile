@@ -12,9 +12,9 @@ FROM node:alpine3.12 as application
 
 WORKDIR /opt/app
 
-COPY package.json .
+COPY ./src/package.json .
 
-COPY package-lock.json .
+COPY ./src/package-lock.json .
 
 COPY --from=builder /build/app .
 
