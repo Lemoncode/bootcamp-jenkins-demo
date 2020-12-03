@@ -18,14 +18,17 @@ pipeline {
         stage('Build') {
             steps {
                 dir("$WORKSPACE/02/src") {
-                    sh 'npm run build'
+                    sh '''
+                      npm install
+                      npm build
+                    '''
                 }
             }
         }
         stage('Unit Test') {
             steps {
               dir("$WORKSPACE/02/src") {
-                sh 'npm tes'
+                sh 'npm test'
               }
             }
         }
