@@ -17,11 +17,13 @@ pipeline {
             }
         }
         stage('Build') {
-            dir("$WORKSPACE/02/src") {
-                sh '''
-                    npm install
-                    npm build
-                '''
+            steps {
+                dir("$WORKSPACE/02/src") {
+                    sh '''
+                        npm install
+                        npm build
+                    '''
+                }
             }
         }
         stage('Unit Test') {
