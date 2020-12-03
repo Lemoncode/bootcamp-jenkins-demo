@@ -1,0 +1,35 @@
+pipeline {
+    agent {
+        dockerfile {
+            dir '02'
+            filename 'Dockerfile.node'
+        }
+    }
+    stages {
+        stage('Verify') {
+            steps {
+                sh '''
+                  node --version
+                  npm version
+                '''
+                sh 'printenv'
+                sh 'ls -l "$WORKSPACE"'
+            }
+        }
+        stage('Build') {
+            dir("$WORKSPACE/02/src") {
+                sh '''
+                    npm install
+                    npm build
+                '''
+            }
+        }
+        stage('Unit Test') {
+            steps {
+                dir("$WORKSPACE/02/src") {
+                sh 'npm test'
+              }
+            }
+        }
+    }
+}
