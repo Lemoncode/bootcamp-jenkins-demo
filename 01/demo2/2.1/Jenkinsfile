@@ -1,0 +1,13 @@
+library identifier: 'bootcamp-jenkins-library@main',
+        retriever: modernSCM([$class: 'GitSCMSource', remote: 'https://github.com/Lemoncode/bootcamp-jenkins-library.git'])
+
+pipeline {
+    agent any
+    stages {
+        stage('Audit tools') {
+            steps {
+                auditTools()
+            }
+        }
+    }
+}
